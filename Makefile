@@ -17,4 +17,4 @@ Container.o: Container.cpp
 	 $(CC)  -c Container.cpp
 
 clean:
-	 rm isoparse.o Box.o Container.o isoparse.exe
+	 rm isoparse.o Box.o Container.o isoparse.exe *.mp4

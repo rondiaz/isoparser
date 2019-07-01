@@ -45,19 +45,16 @@ Box::Box(
 
 void Box::Dump()
 {
+	// Display Box property info to display output
 	uint8_t u8Buf[8];
 	memset(u8Buf, 0, sizeof(u8Buf));
 	// Use buffer to display string readable box type
 	memcpy(u8Buf, m_u8Type, sizeof(m_u8Type));
-/*
-	printf("Box::%s:  \n", __FUNCTION__);
-	printf("     type = %s\n", u8Buf);
-	printf("     size = %d\n", m_u32Size);
-	printf("     offset = %d\n", m_u32Offset);
-*/
+
 	printf("Found Box of type %s and size = %d\n", u8Buf, m_u32Size);
 	if (memcmp(m_u8Type, "mdat", sizeof(m_u8Type)) == 0)
 	{
+		// Display data associated with the mdat Box
 		printf("Content of mdat box is:\n");
 		for (uint32_t u32Index = 0; u32Index < m_u32Size; u32Index++)
 		{
