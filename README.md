@@ -2,7 +2,7 @@
 Sample app which parses ISO base media file
 
 This is an exercise to write a C++ application that prints the layout of the sample ISO media file and extracts the 
-contents of the MDAT box.  
+contents of the rDAT box.  
 
 It does the following:
 1. Read the sample file from
@@ -14,3 +14,13 @@ Which problem can occur if the content of the MDAT box is very large?
 The size of the box data is represented in 4 bytes (32 bits).  If content in MDAT box is greater than 0xFFFFFFFF
 then we would nto be able to correctly parse of capture the content.
 
+Toolchain:
+The sample code was built using GNU toolchain that comes with Ubuntu linux distribution.
+
+Building sample code:
+$ make clean
+$ make
+
+Running sample code:
+After successfully running Makefile:
+$ ./isoparse
