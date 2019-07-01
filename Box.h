@@ -15,16 +15,20 @@ public:
 	Box();
 	virtual ~Box();
 
-	Box( uint16_t offset,
-		 uint16_t size,
-		 uint8_t* name,
-		 uint8_t* parent);
+	Box(
+		  uint32_t u32Size,
+		  uint8_t* u8Type,
+		  uint32_t u32Offset,
+		  uint8_t* u8Data
+		);
+
+	void Dump();
 
 private:
-	uint8_t m_name[16];
-	uint16_t m_offset;
-	uint16_t m_size;
-	uint8_t m_parent[16];
+	uint8_t m_u8Type[4];
+	uint32_t m_u32Size;
+	uint32_t m_u32Offset;
+	uint8_t *m_u8Data;
 };
 
 #endif /* BOX_H_ */

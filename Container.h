@@ -22,9 +22,9 @@ public:
 
 private:
 	FILE *m_fd;
-	uint16_t m_size;
-	uint8_t* m_buffer;
-	uint32_t m_offset;
+	uint32_t m_u32Size;
+	uint32_t m_u32Offset;
+	uint8_t* m_u8Buffer;
 };
 
 #endif /* CONTAINER_H_ */

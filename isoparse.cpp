@@ -1,24 +1,19 @@
-#include <unistd.h>
-#include <stdio.h>
-#include "Box.h"
 #include "Container.h"
 
 
 int main(int argc, char **argv) {
 
-	printf("Start executable\n");
-
-	Box isoBox0;
-	Box isoBox(4, 16, (uint8_t*) "test", (uint8_t*) "root");
-
 	Container isoContainer;
 
-	isoContainer.Open((uint8_t*) "text0.mp4");
+	uint8_t u8Result = isoContainer.Open((uint8_t*) "text0.mp4");
 
-	isoContainer.Parse();
+	if (u8Result == 0)
+	{
+		// If there no opening the Container, then parse it
+		isoContainer.Parse();
+	}
 
 	isoContainer.Close();
 
-	printf("End executable\n");
 	return 0;
 }

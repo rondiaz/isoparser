@@ -5,18 +5,17 @@
  *      Author: rdiaz
  */
 
-#include "Container.h"
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <inttypes.h>
+#include "Container.h"
+#include "Box.h"
 
 Container::Container() {
 	// TODO Auto-generated constructor stub
 	m_fd = 0;
-	m_size = 0;
-	m_buffer = 0;
-	m_offset = 0;
+	m_u32Size = 0;
+	m_u32Offset = 0;
+	m_u8Buffer = 0;
 }
 
 Container::~Container() {
@@ -31,100 +30,96 @@ int8_t Container::Open(uint8_t* name)
 		printf("%s:  ERROR opening %s\n", __FUNCTION__, name);
 		return -1;
 	}
-	printf("%s:  SUCCESSFULLY opened %s\n", __FUNCTION__, name);
+	printf("%s:  SUCCESSFULLY opened Container %s\n", __FUNCTION__, name);
 
     fseek (m_fd , 0 , SEEK_END);
     int32_t i32Size = ftell (m_fd);
-    printf("file size from ftell = %d\n", i32Size);
+    if (i32Size == -1L)
+    {
+    	printf("%s:  ERROR getting file size\n", __FUNCTION__);
+    	return -1;
+    }
+//    printf("file size from ftell = %d\n", i32Size);
     rewind (m_fd);
 
     // allocate memory to contain the whole file:
-    m_buffer = (uint8_t*) malloc (sizeof(uint8_t) * i32Size);
-    if (m_buffer == NULL)
+    m_u8Buffer = new uint8_t[ sizeof(uint8_t) * i32Size ];
+    if (m_u8Buffer == NULL)
     {
     	printf("%s:  ERROR allocating memory\n", __FUNCTION__);
     	return -1;
     }
     // copy the file into the buffer:
-    size_t result = fread (m_buffer,1,i32Size, m_fd);
-    printf("file size from fread = %lu\n", result);
-    if (result != i32Size)
+    uint32_t u32Result = (uint32_t) fread (m_u8Buffer,1,i32Size, m_fd);
+//    printf("file size from fread = %u\n", u32Result);
+    if (u32Result != (uint32_t) i32Size)
     {
     	printf("%s:  ERROR copying file into buffer\n", __FUNCTION__);
     	return -1;
     }
 
-    m_size = result;
+    m_u32Size = u32Result;
 
 	return 0;
 }
 
 int8_t Container::Close()
 {
+	if (m_u8Buffer)
+	{
+		delete []m_u8Buffer;
+		m_u8Buffer = 0;
+	}
 	if (m_fd)
 	{
-		printf("%s:  Closing file\n", __FUNCTION__);
+		printf("%s:  Close Container\n", __FUNCTION__);
 		return fclose(m_fd);
 	}
 	return 0;
 }
 
-const uint8_t BOX_NAME_SIZE = 4;
-
 int8_t Container::Parse()
 {
-	if (!m_buffer)
+	if (!m_u8Buffer)
 	{
 		printf("%s:  ERROR buffer NULL\n", __FUNCTION__);
 		return -1;
 	}
-	uint64_t u64Offset = 0;
-	uint64_t u64Size = 0;
-	uint64_t byte0 = 0;
-	uint64_t byte1 = 0;
-	uint64_t byte2 = 0;
-	uint64_t byte3 = 0;
-	uint8_t  u8BoxName[16];
 
-	uint8_t iter = 0;
+	uint32_t u32Offset = 0;
 
-	while (u64Offset < m_size && m_buffer)
+	while (u32Offset < m_u32Size && m_u8Buffer)
 	{
-		byte0 = m_buffer[u64Offset + 0];
-		byte1 = m_buffer[u64Offset + 1];
-		byte2 = m_buffer[u64Offset + 2];
-		byte3 = m_buffer[u64Offset + 3];
-/*
-		printf("%s:  byte0 = ", __FUNCTION__);
-		printf("%" PRIu64 "\n", byte0);
-		printf("%s:  byte1 = ", __FUNCTION__);
-		printf("%" PRIu64 "\n", byte1);
-		printf("%s:  byte2 = ", __FUNCTION__);
-		printf("%" PRIu64 "\n", byte2);
-		printf("%s:  byte3 = ", __FUNCTION__);
-		printf("%" PRIu64 "\n", byte3);
-*/
-		u64Size =  byte0 << 32 | byte1 << 16 | byte2 << 8 | byte3;
+		uint32_t u32Size = 0;
+		uint8_t u8Type[4];
 
-		printf("%s:  u64Size = ", __FUNCTION__);
-		printf("%" PRIu64 "\n", u64Size);
+		u32Size =  m_u8Buffer[u32Offset + 0] << 24 | m_u8Buffer[u32Offset + 1] << 16 | m_u8Buffer[u32Offset + 2] << 8 | m_u8Buffer[u32Offset + 3];
 
-		memset(u8BoxName, 0, sizeof(u8BoxName));
-	    memcpy(u8BoxName, m_buffer+u64Offset+4, BOX_NAME_SIZE);
+		memset(u8Type, 0, sizeof(u8Type));
+	    memcpy(u8Type, m_u8Buffer+u32Offset+4, sizeof(u8Type));
 
-	    printf("%s:  BoxName=%s\n", __FUNCTION__, u8BoxName);
-
-	    if (strcmp((const char*) u8BoxName, "moof") == 0 || strcmp((const char*) u8BoxName, "traf") == 0)
-	    	u64Offset+= 8;
+	    uint8_t *u8Data = new uint8_t[u32Size];
+	    if (u8Data)
+	    {
+	    	memcpy(u8Data, m_u8Buffer + u32Offset + 8, u32Size);
+	    }
 	    else
-	    	u64Offset += u64Size;
+	    {
+			printf("%s:  ERROR allocating memory for Box data\n", __FUNCTION__);
+	    }
 
-		printf("%s:  u64Offset = ", __FUNCTION__);
-		printf("%" PRIu64 "\n", u64Offset);
-/*
-		iter++;
-		if (iter == 8)
-		break;  */
+		Box *pBox = new Box(u32Size, u8Type, u32Offset, u8Data);
+		if (pBox)
+		{
+			pBox->Dump();
+			delete pBox;
+		}
+		else
+			printf("%s:  ERROR allocating memory for Box\n", __FUNCTION__);
+	    if (memcmp(u8Type, "moof", sizeof(u8Type)) == 0 || memcmp(u8Type, "traf", sizeof(u8Type)) == 0)
+	    	u32Offset+= 8;
+	    else
+	    	u32Offset += u32Size;
 	}
 
 	return 0;
