@@ -1,26 +1,26 @@
 /*
- * Container.h
+ * IsoContainer.h
  *
  *  Created on: Jun 28, 2019
  *      Author: rdiaz
  */
 
-#ifndef CONTAINER_H_
-#define CONTAINER_H_
+#ifndef ISOCONTAINER_H_
+#define ISOCONTAINER_H_
 
 #include <stdio.h>
 #include <stdint.h>
 
 // Object:
-//	Container
+//	IsoContainer
 // Description:
-//	The initial implementation of the Container class captures the properties and methods used for the
+//	The initial implementation of the IsoContainer class captures the properties and methods used for the
 //	container used to hold the ISO media file.
 
-class Container {
+class IsoContainer {
 public:
-	Container();
-	virtual ~Container();
+	IsoContainer();
+	virtual ~IsoContainer();
 
 	int8_t Open();
 	int8_t Close();
@@ -33,4 +33,4 @@ private:
 	uint8_t* m_u8Buffer;		// Pointer to the file data
 };
 
-#endif /* CONTAINER_H_ */
+#endif /* ISOCONTAINER_H_ */

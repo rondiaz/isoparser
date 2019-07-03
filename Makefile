@@ -1,11 +1,11 @@
 CC = g++
 
-OBJS = isoparse.o Box.o Container.o
+OBJS = isoparse.o Box.o IsoContainer.o
 
 all: isoparse.exe
 
-isoparse.exe: isoparse.o Box.o Container.o
-	 $(CC)  -o isoparse.exe isoparse.o Box.o Container.o
+isoparse.exe: isoparse.o Box.o IsoContainer.o
+	 $(CC)  -o isoparse.exe isoparse.o Box.o IsoContainer.o
 
 isoparse.o: isoparse.cpp
 	 $(CC) -c isoparse.cpp
@@ -13,8 +13,8 @@ isoparse.o: isoparse.cpp
 Box.o: Box.cpp
 	 $(CC)  -c Box.cpp
 
-Container.o: Container.cpp
-	 $(CC)  -c Container.cpp
+IsoContainer.o: IsoContainer.cpp
+	 $(CC)  -c IsoContainer.cpp
 
 clean:
-	 rm isoparse.o Box.o Container.o isoparse.exe *.mp4
+	 rm isoparse.o Box.o IsoContainer.o isoparse.exe *.mp4

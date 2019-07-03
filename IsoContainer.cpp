@@ -1,5 +1,5 @@
 /*
- * Container.cpp
+ * IsoContainer.cpp
  *
  *  Created on: Jun 28, 2019
  *      Author: rdiaz
@@ -8,10 +8,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "Container.h"
+#include "IsoContainer.h"
 #include "Box.h"
 
-Container::Container() {
+IsoContainer::IsoContainer() {
 	// TODO Auto-generated constructor stub
 	m_fd = 0;
 	m_u32Size = 0;
@@ -19,7 +19,7 @@ Container::Container() {
 	m_u8Buffer = 0;
 }
 
-Container::~Container() {
+IsoContainer::~IsoContainer() {
 	// TODO Auto-generated destructor stub
 	if (m_u8Buffer)
 	{
@@ -28,7 +28,7 @@ Container::~Container() {
 	}
 }
 
-int8_t Container::Open()
+int8_t IsoContainer::Open()
 {
 	system("wget http://demo.castlabs.com/tmp/text0.mp4");
 	uint8_t name[] = "text0.mp4";
@@ -39,7 +39,7 @@ int8_t Container::Open()
 		printf("%s:  ERROR opening %s\n", __FUNCTION__, name);
 		return -1;
 	}
-	printf("%s:  SUCCESSFULLY opened Container %s\n", __FUNCTION__, name);
+	printf("%s:  SUCCESSFULLY opened IsoContainer %s\n", __FUNCTION__, name);
 
     fseek (m_fd , 0 , SEEK_END);
     int32_t i32Size = ftell (m_fd);
@@ -70,7 +70,7 @@ int8_t Container::Open()
 	return 0;
 }
 
-int8_t Container::Close()
+int8_t IsoContainer::Close()
 {
 	if (m_u8Buffer)
 	{
@@ -79,13 +79,13 @@ int8_t Container::Close()
 	}
 	if (m_fd)
 	{
-		printf("%s:  Close Container\n", __FUNCTION__);
+		printf("%s:  Close IsoContainer\n", __FUNCTION__);
 		return fclose(m_fd);
 	}
 	return 0;
 }
 
-int8_t Container::Parse()
+int8_t IsoContainer::Parse()
 {
 	// Parse the box objects and its properties in the media file
 	if (!m_u8Buffer)

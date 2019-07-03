@@ -1,4 +1,4 @@
-#include "Container.h"
+#include "IsoContainer.h"
 
 // File:  isoparse.cpp
 //
@@ -8,14 +8,14 @@
 
 int main(int argc, char **argv) {
 
-	Container isoContainer;
+	IsoContainer isoContainer;
 
 	// Open the container used for ISO media file
 	uint8_t u8Result = isoContainer.Open();
 
 	if (u8Result == 0)
 	{
-		// If there no opening the Container, then parse it
+		// If there no opening the IsoContainer, then parse it
 		isoContainer.Parse();
 	}
 
