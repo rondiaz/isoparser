@@ -8,8 +8,8 @@
 #ifndef ISOCONTAINER_H_
 #define ISOCONTAINER_H_
 
-#include <stdio.h>
 #include <stdint.h>
+
 
 // Object:
 //	IsoContainer
@@ -27,7 +27,6 @@ public:
 	int8_t Parse();
 
 private:
-	FILE *m_fd;					// File descriptor of the IOS media file
 	uint32_t m_u32Size;			// Size of the media file
 	uint32_t m_u32Offset;		// Byte offset info media file when parsing the data
 	uint8_t* m_u8Buffer;		// Pointer to the file data

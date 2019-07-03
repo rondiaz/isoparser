@@ -5,11 +5,11 @@
  *      Author: rdiaz
  */
 
-//#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
 #include <iostream>
+#include <fstream>
 using namespace std;
 
 #include "IsoContainer.h"
@@ -17,14 +17,11 @@ using namespace std;
 
 IsoContainer::IsoContainer() {
 	// TODO Auto-generated constructor stub
-	m_fd = 0;
-	m_u32Size = 0;
-	m_u32Offset = 0;
-	m_u8Buffer = 0;
 }
 
 IsoContainer::~IsoContainer() {
 	// TODO Auto-generated destructor stub
+	// Free up allocated memory
 	if (m_u8Buffer)
 	{
 		delete []m_u8Buffer;
@@ -37,55 +34,35 @@ int8_t IsoContainer::Open()
 	system("wget http://demo.castlabs.com/tmp/text0.mp4");
 	uint8_t name[] = "text0.mp4";
 
-	m_fd = fopen((const char*) name, "rb");
-	if (!m_fd)
+	ifstream isoFstream ((const char*) name, ios::in|ios::binary|ios::ate);
+	if (!isoFstream.is_open())
 	{
 		cout << __FUNCTION__ << ":  ERROR opening  " << name << "\n" ;
 		return -1;
 	}
-	cout << __FUNCTION__ << ":  SUCCESSFULLY opened IsoContainer " << name << "\n";
-
-
-    fseek (m_fd , 0 , SEEK_END);
-    int32_t i32Size = ftell (m_fd);
-    if (i32Size == -1L)
-    {
-		cout << __FUNCTION__ << ":  ERROR getting file size\n ";
-    	return -1;
-    }
-    rewind (m_fd);
-
-    // allocate memory to contain the whole file:
-    m_u8Buffer = new uint8_t[ sizeof(uint8_t) * i32Size ];
+	streampos size = isoFstream.tellg();
+	m_u8Buffer = new uint8_t [size];
     if (m_u8Buffer == NULL)
     {
 		cout << __FUNCTION__ << ":  ERROR allocating memory\n ";
+		isoFstream.close();
     	return -1;
     }
-    // copy the file into the buffer:
-    uint32_t u32Result = (uint32_t) fread (m_u8Buffer,1,i32Size, m_fd);
-    if (u32Result != (uint32_t) i32Size)
-    {
-		cout << __FUNCTION__ << ":  ERROR copying file into buffer\n ";
-    	return -1;
-    }
-
-    m_u32Size = u32Result;
-
+    // Copy the file contents to the buffer
+	isoFstream.seekg (0, ios::beg);
+	isoFstream.read ((char*) m_u8Buffer, size);
+	isoFstream.close();
+	m_u32Size = size;
 	return 0;
 }
 
 int8_t IsoContainer::Close()
 {
+	// Free up allocated memory
 	if (m_u8Buffer)
 	{
 		delete []m_u8Buffer;
 		m_u8Buffer = 0;
-	}
-	if (m_fd)
-	{
-		cout << __FUNCTION__ << ":  Close IsoContainer\n ";
-		return fclose(m_fd);
 	}
 	return 0;
 }

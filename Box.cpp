@@ -14,10 +14,6 @@ using namespace std;
 
 Box::Box() {
 	// TODO Auto-generated constructor stub
-	m_u32Size = 0;
-	memset(m_u8Type, 0, sizeof(m_u8Type));
-	m_u32Offset = 0;
-	m_u8Data = 0;
 }
 
 Box::~Box() {
