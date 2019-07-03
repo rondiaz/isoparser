@@ -5,8 +5,11 @@
  *      Author: rdiaz
  */
 
-#include <stdio.h>
 #include <string.h>
+
+#include <iostream>
+using namespace std;
+
 #include "Box.h"
 
 Box::Box() {
@@ -51,14 +54,14 @@ void Box::Dump()
 	// Use buffer to display string readable box type
 	memcpy(u8Buf, m_u8Type, sizeof(m_u8Type));
 
-	printf("Found Box of type %s and size = %d\n", u8Buf, m_u32Size);
+	cout  << "Found Box of type " << u8Buf << " and size "  << m_u32Size << "\n" ;
 	if (memcmp(m_u8Type, "mdat", sizeof(m_u8Type)) == 0)
 	{
 		// Display data associated with the mdat Box
-		printf("Content of mdat box is:\n");
+		cout  << "Content of mdat box is:\n" ;
 		for (uint32_t u32Index = 0; u32Index < m_u32Size; u32Index++)
 		{
-			printf("%c", m_u8Data[u32Index]);
+			cout << m_u8Data[u32Index];
 		}
 	}
 }

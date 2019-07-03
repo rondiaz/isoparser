@@ -5,9 +5,13 @@
  *      Author: rdiaz
  */
 
-#include <stdio.h>
+//#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+#include <iostream>
+using namespace std;
+
 #include "IsoContainer.h"
 #include "Box.h"
 
@@ -36,16 +40,17 @@ int8_t IsoContainer::Open()
 	m_fd = fopen((const char*) name, "rb");
 	if (!m_fd)
 	{
-		printf("%s:  ERROR opening %s\n", __FUNCTION__, name);
+		cout << __FUNCTION__ << ":  ERROR opening  " << name << "\n" ;
 		return -1;
 	}
-	printf("%s:  SUCCESSFULLY opened IsoContainer %s\n", __FUNCTION__, name);
+	cout << __FUNCTION__ << ":  SUCCESSFULLY opened IsoContainer " << name << "\n";
+
 
     fseek (m_fd , 0 , SEEK_END);
     int32_t i32Size = ftell (m_fd);
     if (i32Size == -1L)
     {
-    	printf("%s:  ERROR getting file size\n", __FUNCTION__);
+		cout << __FUNCTION__ << ":  ERROR getting file size\n ";
     	return -1;
     }
     rewind (m_fd);
@@ -54,14 +59,14 @@ int8_t IsoContainer::Open()
     m_u8Buffer = new uint8_t[ sizeof(uint8_t) * i32Size ];
     if (m_u8Buffer == NULL)
     {
-    	printf("%s:  ERROR allocating memory\n", __FUNCTION__);
+		cout << __FUNCTION__ << ":  ERROR allocating memory\n ";
     	return -1;
     }
     // copy the file into the buffer:
     uint32_t u32Result = (uint32_t) fread (m_u8Buffer,1,i32Size, m_fd);
     if (u32Result != (uint32_t) i32Size)
     {
-    	printf("%s:  ERROR copying file into buffer\n", __FUNCTION__);
+		cout << __FUNCTION__ << ":  ERROR copying file into buffer\n ";
     	return -1;
     }
 
@@ -79,7 +84,7 @@ int8_t IsoContainer::Close()
 	}
 	if (m_fd)
 	{
-		printf("%s:  Close IsoContainer\n", __FUNCTION__);
+		cout << __FUNCTION__ << ":  Close IsoContainer\n ";
 		return fclose(m_fd);
 	}
 	return 0;
@@ -90,7 +95,7 @@ int8_t IsoContainer::Parse()
 	// Parse the box objects and its properties in the media file
 	if (!m_u8Buffer)
 	{
-		printf("%s:  ERROR buffer NULL\n", __FUNCTION__);
+		cout << __FUNCTION__ << ":  ERROR buffer memory not allocated\n ";
 		return -1;
 	}
 
@@ -119,7 +124,7 @@ int8_t IsoContainer::Parse()
 	    }
 	    else
 	    {
-			printf("%s:  ERROR allocating memory for Box data\n", __FUNCTION__);
+			cout << __FUNCTION__ << ":  ERROR allocating memory for Box data\n ";
 	    }
 
 		Box *pBox = new Box(u32Size, u8Type, u32Offset, u8Data);
@@ -130,7 +135,7 @@ int8_t IsoContainer::Parse()
 		}
 		else
 		{
-			printf("%s:  ERROR allocating memory for Box\n", __FUNCTION__);
+			cout << __FUNCTION__ << ":  ERROR allocating memory for Box\n ";
 			if (u8Data)
 			{
 				// Sicne we were not able to create a Box object, when need to cleanup and delete memory allocated for box data
