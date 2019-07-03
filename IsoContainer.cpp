@@ -40,6 +40,7 @@ int8_t IsoContainer::Open()
 		cout << __FUNCTION__ << ":  ERROR opening  " << name << "\n" ;
 		return -1;
 	}
+	// Get the file size
 	streampos size = isoFstream.tellg();
 	m_u8Buffer = new uint8_t [size];
     if (m_u8Buffer == NULL)
@@ -48,8 +49,9 @@ int8_t IsoContainer::Open()
 		isoFstream.close();
     	return -1;
     }
-    // Copy the file contents to the buffer
+    // Set the file postion to the beginning
 	isoFstream.seekg (0, ios::beg);
+    // Copy the file contents to the buffer
 	isoFstream.read ((char*) m_u8Buffer, size);
 	isoFstream.close();
 	m_u32Size = size;
